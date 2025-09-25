@@ -1,0 +1,40 @@
+%{
+#include<stdio.h>
+%}
+%option noyywrap
+
+preprocessor #.*
+keyword if|else|while|do|for|int|float|char|goto|default|switch|case|return>identifier [_a-zA-Z][_a-zA-Z0-9]*
+integer [0-9]+
+decimal [0-9]+(\.[0-9]+)?([eE][-+]?[0-9]+)?
+string \".*\"
+relop "<"|">"|"<="|">="|"=="|"!="
+arithop [+\-*/%]
+bitwiseop ">>"|"<<"|"&"|"|"|"~"|"^"
+logicalop "||"|"&&"|"!"
+assop "="|"+="|"-="|"/="|"%="
+multicmt "/*"(.|"\n")*"*/"
+singlecmt "//".*
+punctuators [,.;:'{}()\[\]]
+%%
+{preprocessor} {printf("Preprocessor: \t%s\n",yytext);}
+{keyword} {printf("Keyword: \t%s\n",yytext);}
+{identifier} {printf("Identifier: \t%s\n",yytext);}
+{integer} {printf("Integer: \t%s\n",yytext);}
+{decimal} {printf("Decimal: \t%s\n",yytext);}
+{string} {printf("String: \t%s\n",yytext);}
+{relop} {printf("Relational Operator: \t%s\n",yytext);}
+{arithop} {printf("Arithmetic Operator: \t%s\n",yytext);}
+{bitwiseop} {printf("Bitwise Operator: \t%s\n",yytext);}
+{logicalop} {printf("Logocal Operator: \t%s\n",yytext);}
+{assop} {printf("Assignment operator: \t%s\n",yytext);}
+{singlecmt} {printf("Single line comment: \t%s\n",yytext);}
+{multicmt} {printf("Multi line comment: \t%s\n",yytext);}
+{punctuators} {printf("Punctuator: \t%s\n",yytext);}
+.
+%%
+void main(int argc,char** argv){
+        yyin=fopen(argv[1],"r");
+        yylex();
+        fclose(yyin);
+}
