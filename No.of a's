@@ -1,0 +1,18 @@
+%{
+#include <stdio.h>
+int num_of_as = 0;
+%}
+
+%option noyywrap
+
+%%
+[aA]        { num_of_as++; }
+.           { /* Do Nothing for other characters */ }
+%%
+
+int main() {
+    printf("Enter some text, Ctrl+D to stop:\n");
+    yylex();
+    printf("The number of a's in the input is %d\n", num_of_as);
+    return 0;
+}
