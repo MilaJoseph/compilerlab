@@ -1,0 +1,18 @@
+%{
+#include<stdio.h>
+char words=0,chars=0,lines=0;
+%}
+%option noyywrap
+
+%%
+"\n"  {lines++,chars++;}
+[^\t\n ]+ {words++,chars+=yyleng;}
+. {chars++;}
+%%
+int main(char argc,char **argv)
+{
+        yyin=fopen(argv[1],"r");
+        yylex();
+        printf("\nchars= %d,\nwords=%d\nlines=%d",chars,words,lines);
+        fclose(yyin);
+}
