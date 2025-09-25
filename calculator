@@ -1,0 +1,43 @@
+ %{
+#include <stdio.h>
+#include <stdlib.h>   // for atof()
+
+int opcode = 0;       // 0 = no op, 1 = +, 2 = -, 3 = *, 4 = /
+float opnd1 = 0, res = 0;
+int first_num = 1;    // flag to know if it's the first number
+void calculate(char *text);
+%}
+
+num     [0-9]+|[0-9]*"."[0-9]+
+%option noyywrap
+
+%%
+{num}   { calculate(yytext); }
+"+"     { opcode = 1; }
+"-"     { opcode = 2; }
+"*"     { opcode = 3; }
+"/"     { opcode = 4; }
+\n      { printf("\nThe result is %g\n", res); }
+%%
+
+void calculate(char *text)
+{
+    float val = atof(text);
+
+    if (first_num) {
+        // First number initializes the result
+        res = val;
+        first_num = 0;
+    } else {
+        // Apply operator with new value
+        if (opcode == 1) res = res + val;
+        else if (opcode == 2) res = res - val;
+        else if (opcode == 3) res = res * val;
+        else if (opcode == 4) res = res / val;
+    }
+}
+int main()
+{
+yylex();
+return 0;
+}
