@@ -19,10 +19,9 @@ void getENFA() {
     printf("Example: q0#q1 (means q0 --ε--> q1)\n\n");
 
     for (int t = 0; t < numTrans; t++) {
-        char left, right;
         int from, to;
-
         char symbol;
+        
         printf("Transition %d: ", t + 1);
         scanf(" q%d%cq%d", &from, &symbol, &to);
 
