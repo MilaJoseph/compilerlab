@@ -1,27 +1,27 @@
 #include <stdio.h>
 #include <string.h>
 
-// Grammar: E -> E+E | E*E | (E) | i
-// Note: We’ll only use 4 rules here to keep things simple.
-char *productions[] = {"E+E", "E*E", "(E)", "i"};
-int num_productions = 4;
+#define MAX 100
 
-char stack[100];
-int top = -1;  // stack top
+// Grammar:
+// E -> E+E | E*E | E-E | E/E | (E) | i
+char *productions[] = {"E+E", "E*E", "E-E", "E/E", "(E)", "i"};
+int num_productions = 6;
 
-// Function to print parser step
-void print_step(const char* action, const char* input, int ip) {
-    // print stack
-    for (int i = 0; i <= top; i++) {
+char stack[MAX];
+int top = -1;
+
+// Function to display stack, input, and action in formatted table
+void print_step(const char *action, const char *input, int ip) {
+    // Print stack content
+    for (int i = 0; i <= top; i++)
         printf("%c", stack[i]);
-    }
     printf("\t\t");
 
-    // print input
-    printf("%s", input + ip);
-    printf("\t\t");
+    // Print remaining input
+    printf("%s\t\t", input + ip);
 
-    // print action
+    // Print action
     printf("%s\n", action);
 }
 
@@ -38,53 +38,61 @@ int reduce() {
         if (top + 1 >= len) {
             // Check if top of stack matches RHS
             if (strncmp(&stack[top - len + 1], productions[i], len) == 0) {
-                // Pop RHS
+                // Pop RHS and replace with LHS 'E'
                 top = top - len + 1;
-                // Replace with LHS (always 'E' here)
                 stack[top] = 'E';
-                return 1; // reduced
+
+                char action[50];
+                sprintf(action, "Reduced by production E->%s", productions[i]);
+                print_step(action, "", 0);
+                return 1; // Reduced successfully
             }
         }
     }
-    return 0; // no reduction
+    return 0; // No reduction
 }
 
 int main() {
-    char input[100];
+    char input[MAX];
     int ip = 0;
 
     printf("Grammar:\n");
-    printf("E -> E+E | E*E | (E) | i\n");
-    printf("--------------------------------\n");
-    printf("Enter input string: ");
+    printf("E -> E+E | E*E | E-E | E/E | (E) | i\n");
+    printf("--------------------------------------------------\n");
+    printf("Enter the input string: ");
     scanf("%s", input);
 
     // Initialize stack with $
     stack[++top] = '$';
 
-    printf("\n--- Parsing Steps ---\n");
+    printf("\nSHIFT-REDUCE PARSING\n");
     printf("Stack\t\tInput\t\tAction\n");
     printf("-----\t\t-----\t\t------\n");
+
     print_step("Initial", input, ip);
 
     // Parsing loop
     while (1) {
         if (reduce()) {
-            print_step("Reduce", input, ip);
+            // reduction already printed inside reduce()
         } else if (input[ip] != '\0') {
+            char action[30];
+            sprintf(action, "Shifted %c to stack", input[ip]);
             shift(input[ip]);
             ip++;
-            print_step("Shift", input, ip);
+            print_step(action, input, ip);
         } else {
             break;
         }
     }
 
-    // Acceptance check
+    // Final acceptance check
     if (top == 1 && stack[1] == 'E') {
-        printf("\nSUCCESS: Input string accepted.\n");
+        printf("--------------------------------------------------\n");
+        printf("Input accepted ✅\n");
     } else {
-        printf("\nERROR: Input string rejected.\n");
+        printf("--------------------------------------------------\n");
+        printf("Input rejected ❌\n");
     }
 
     return 0;
