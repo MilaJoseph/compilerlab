@@ -29,11 +29,11 @@ char *get_instr(char op)
     strcpy(instr,mnemonics[op-'*']);
     return instr;
 }
-void generate_target_code()
-{
-    for(int i=0;i<num_instr;i++)
-    {
-        printf("MOV AX,%s\n%s AX,%s\nMOV %s,AX\n",tac[i].opnd1,get_instr(tac[i].op),tac[i].opnd2,tac[i].res);
+void generate_target_code() {
+    for (int i = 0; i < num_instr; i++) {
+        printf("MOV AX,%s\n", tac[i].opnd1);
+        printf("%s AX,%s\n", get_instr(tac[i].op), tac[i].opnd2);
+        printf("MOV %s,AX\n", tac[i].res);
     }
 }
 int main()
