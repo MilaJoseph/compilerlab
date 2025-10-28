@@ -18,7 +18,6 @@ int priority(char c) {
 
 void generateICG(char exp[]) {
     int i = 0, tempCount = 1;
-    char temp[10];
 
     while (exp[i] != '\0') {
         // If it's an operand (letter or digit)
